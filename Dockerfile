@@ -3,7 +3,7 @@ FROM rust:1.82 as builder
 WORKDIR /usr/src/app
 COPY Cargo.toml Cargo.lock ./
 COPY . .
-RUN cargo build
+RUN cargo build --release
 
 # host application
 FROM debian:buster-slim
