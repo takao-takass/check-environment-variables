@@ -91,7 +91,7 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(response.content_type(), Some(ContentType::HTML));
         let body = response.into_string().unwrap();
-        assert!(body.contains("CHECK_ENV_SASHIMI : fresh"));
-        assert!(body.contains("CHECK_ENV_SUSHI : delicious"));
+        assert!(body.contains("CHECK_ENV_SASHIMI : maguro"));
+        assert!(body.contains("CHECK_ENV_SUSHI : amaebi"));
     }
 }
