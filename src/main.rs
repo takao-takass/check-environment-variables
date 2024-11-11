@@ -58,6 +58,7 @@ mod test {
     use rocket::uri;
     use rocket::http::{ContentType, Status};
     use rocket::local::blocking::Client;
+    use std::env;
 
     #[test]
     fn index() {
@@ -77,5 +78,20 @@ mod test {
 
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(response.content_type(), Some(ContentType::HTML));
+    }
+
+    #[test]
+    fn environment() {
+        env::set_var("CHECK_ENV_SASHIMI", "maguro");
+        env::set_var("CHECK_ENV_SUSHI", "amaebi");
+
+        let client = Client::tracked(rocket()).expect("valid rocket instance");
+        let response = client.get(uri!(super::environment)).dispatch();
+
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.content_type(), Some(ContentType::HTML));
+        let body = response.into_string().unwrap();
+        assert!(body.contains("CHECK_ENV_SASHIMI : fresh"));
+        assert!(body.contains("CHECK_ENV_SUSHI : delicious"));
     }
 }
