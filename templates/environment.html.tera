@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Templating Example</title>
+  </head>
+  <body>
+    <p>CHECK_ENV_SASHIMI : {{ sashimi }}</p>
+    <p>CHECK_ENV_SUSHI : {{ sushi }}</p>
+  </body>
+</html>

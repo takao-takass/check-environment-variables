@@ -1,9 +1,41 @@
 #[macro_use] extern crate rocket;
+use rocket::response::status;
+use rocket::http::{Status, ContentType};
 use rocket_dyn_templates::{Template, /*handlebars,*/ context};
 
 #[get("/")]
 fn index() -> &'static str {
-    "Hello, world!"
+    get_environment_variables()
+}
+
+fn get_environment_variables() -> &'static str {
+    let env = std::env::var("ENVIRONMENT").unwrap_or_else(|_| "development".to_string());
+    match env.as_str() {
+        "development" => "Hello, world!",
+        "production" => "Hello, world! (production)",
+        _ => "Hello, world! (unknown environment)",
+    }
+}
+
+#[get("/environment")]
+fn environment() -> Template {
+    let sashimi = std::env::var("CHECK_ENV_SASHIMI").unwrap_or_else(|_| "".to_string());
+    let sushi = std::env::var("CHECK_ENV_SUSHI").unwrap_or_else(|_| "".to_string());
+
+    Template::render("environment", context! {
+        sashimi: sashimi,
+        sushi: sushi,
+    })
+}
+
+#[get("/json")]
+fn json() -> (Status, (ContentType, &'static str)) {
+    (Status::ImATeapot, (ContentType::JSON, "{ \"hi\": \"world\" }"))
+}
+
+#[post("/<id>")]
+fn accept(id: usize) -> status::Accepted<String> {
+    status::Accepted(format!("id: '{}'", id))
 }
 
 #[get("/templating/<arg_foo>")]
@@ -16,7 +48,7 @@ fn templating(arg_foo: &str) -> Template {
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![index, templating])
+        .mount("/", routes![index, templating, accept, json, environment])
         .attach(Template::fairing())
 }
 
